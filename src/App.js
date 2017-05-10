@@ -2,26 +2,34 @@
 import React, { Component } from 'react';
 import './App.css';
 import Youtube from './Youtube.js'
+import Subtitle from './Subtitle.js'
+import lrcParser from './lrcParser.js'
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       player: null,
-      videoId: "g7rOyxIKsX8",
+      videoId: "Mqr-kjvXsk8",
+      time: 0,
     }
     this.setPlayer = this.setPlayer.bind(this);
+    this.setTime = this.setTime.bind(this);
     this.urlOnSet = this.urlOnSet.bind(this);
+    this.lrcOnChange = this.lrcOnChange.bind(this);
+    this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
   }
   render() {
     return (
-      <div>
-        <input
-          type="textbox"
-        ></input>
-        <button
-          onClick={this.urlOnSet}
-        >Set url</button>
+      <div className="flex">
+        <div>
+          <input
+            type="textbox"
+          ></input>
+          <button
+            onClick={this.urlOnSet}
+          >Set url</button>
+        </div>
         <Youtube
           player={this.state.player}
           videoId={this.state.videoId}
@@ -30,8 +38,20 @@ class App extends Component {
           onPlayerReady={this.onPlayerReady}
           onPlayerStateChange={this.onPlayerStateChange}
         ></Youtube>
+        <Subtitle
+          sub={this.state.sub}
+          time={this.state.time}
+        ></Subtitle>
+        <textarea
+          onChange={this.lrcOnChange}
+        ></textarea>
       </div>
     );
+  }
+  lrcOnChange(e) {
+    const parsed = lrcParser(e.target.value);
+    console.log(parsed);
+    this.setState({ sub: parsed.lyrics});
   }
   urlOnSet(e) {
     const url = e.target.previousSibling.value;
@@ -51,13 +71,21 @@ class App extends Component {
     // 5. The API calls this function when the player's state changes.
     //    The function indicates that when playing a video (state=1),
     //    the player should play for six seconds and then stop.
-    function stopVideo() {
-      event.target.stopVideo();
+    if (event.data === YT.PlayerState.PLAYING) {
+      const timer = setInterval(this.setTime, 50);
+      this.setState({ timer});
     }
-    if (event.data === YT.PlayerState.PLAYING && !event.target.done) {
-      setTimeout(stopVideo, 6000);
-      event.target.done = true;
+    else {
+      // FIXME may setstate twice here
+      this.setState({ time: this.state.player.getCurrentTime() });
+      if(this.state.timer) {
+        clearInterval(this.state.timer);
+        this.setState({timer: 0});
+      }
     }
+  }
+  setTime() {
+    this.setState({ time: this.state.player.getCurrentTime() });
   }
 }
 
