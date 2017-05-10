@@ -22,6 +22,7 @@ class App extends Component {
     this.setTime = this.setTime.bind(this);
     this.setOffset = this.setOffset.bind(this);
     this.urlOnSet = this.urlOnSet.bind(this);
+    this.fullOnClick = this.fullOnClick.bind(this);
     this.lrcOnChange = this.lrcOnChange.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
   }
@@ -61,6 +62,9 @@ class App extends Component {
           ref="text"
           value={defaultVid.lrc}
         ></textarea>
+        <button
+          onClick={this.fullOnClick}
+        >Fullscreen</button>
       </div>
     );
   }
@@ -87,6 +91,9 @@ class App extends Component {
       console.log(videoId);
       this.setState({videoId});
     }
+  }
+  fullOnClick() {
+    this.state.player.setSize(window.document.body.clientWidth, window.document.body.clientHeight);
   }
   setPlayer(player) {
     this.setState({player});
