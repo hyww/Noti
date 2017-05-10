@@ -4,7 +4,7 @@ const Subtitle = (props) => {
   const getText= (l, s) => {
     for( let i = l.length - 1 ; i >= 0 ; i-- ){
       if ( l[i].time <= s )
-        return l[i].text==''?'　':l[i].text;
+        return l[i].text===''?'　':l[i].text;
     }
   };
   return (
