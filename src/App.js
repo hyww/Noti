@@ -12,6 +12,7 @@ class App extends Component {
       player: null,
       videoId: "Mqr-kjvXsk8",
       time: 0,
+      timer: null,
     }
     this.setPlayer = this.setPlayer.bind(this);
     this.setTime = this.setTime.bind(this);
@@ -71,21 +72,22 @@ class App extends Component {
     // 5. The API calls this function when the player's state changes.
     //    The function indicates that when playing a video (state=1),
     //    the player should play for six seconds and then stop.
-    if (event.data === YT.PlayerState.PLAYING) {
+    if (event.data === YT.PlayerState.PLAYING && this.state.timer===null) {
       const timer = setInterval(this.setTime, 50);
       this.setState({ timer});
     }
     else {
       // FIXME may setstate twice here
       this.setState({ time: this.state.player.getCurrentTime() });
-      if(this.state.timer) {
+      if(this.state.timer !== null) {
         clearInterval(this.state.timer);
-        this.setState({timer: 0});
+        this.setState({timer: null});
       }
     }
   }
   setTime() {
     this.setState({ time: this.state.player.getCurrentTime() });
+    console.log(this.state.time);
   }
 }
 
