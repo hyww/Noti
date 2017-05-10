@@ -1,4 +1,9 @@
 
+/*
+  FIXME:
+    multiple tag with one text
+    multiple tag-text pair in one line
+*/
 const lrcParser= (lrc) => {
   let parsed = {lyrics:[]};
   lrc.replace(/\s*\[([^\]]+)\](.*)/g, function(a, tag, l){
