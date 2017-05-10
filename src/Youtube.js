@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 
 
 class Youtube extends Component {
+  //FIXME only allows one player per page
   render() {
     return (
       <div id="player"></div>
@@ -16,7 +17,6 @@ class Youtube extends Component {
     tag.src = "https://www.youtube.com/iframe_api";
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
     // 3. This function creates an <iframe> (and YouTube player)
     //    after the API code downloads.
     var player;
@@ -31,6 +31,11 @@ class Youtube extends Component {
         }
       });
       props.setPlayer(player);
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    if ( this.props.videoId !== nextProps.videoId ) {
+      this.props.player.loadVideoById(nextProps.videoId);
     }
   }
 }

@@ -6,21 +6,42 @@ import Youtube from './Youtube.js'
 class App extends Component {
   constructor() {
     super();
+    this.state = {
+      player: null,
+      videoId: "g7rOyxIKsX8",
+    }
     this.setPlayer = this.setPlayer.bind(this);
+    this.urlOnSet = this.urlOnSet.bind(this);
   }
   render() {
     return (
-      <Youtube
-        videoId="g7rOyxIKsX8"
-        setPlayer={this.setPlayer}
-        onPlayerReady={this.onPlayerReady}
-        onPlayerStateChange={this.onPlayerStateChange}
-      ></Youtube>
+      <div>
+        <input
+          type="textbox"
+        ></input>
+        <button
+          onClick={this.urlOnSet}
+        >Set url</button>
+        <Youtube
+          player={this.state.player}
+          videoId={this.state.videoId}
+          videoUrl={this.state.videoUrl}
+          setPlayer={this.setPlayer}
+          onPlayerReady={this.onPlayerReady}
+          onPlayerStateChange={this.onPlayerStateChange}
+        ></Youtube>
+      </div>
     );
+  }
+  urlOnSet(e) {
+    const url = e.target.previousSibling.value;
+    if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)(\w+)(.+)?/.test(url) ) {
+      const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)(\w+)(.+)?/, "$5");
+      this.setState({videoId});
+    }
   }
   setPlayer(player) {
     this.setState({player});
-    console.log(this.state.player);
   }
   onPlayerReady(event) {
     event.target.playVideo();
