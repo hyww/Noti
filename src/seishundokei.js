@@ -86,7 +86,7 @@ const seishundokei = {
 [03:25.60]作曲：大河原昇
 [03:26.30]編曲：大河原昇
 [03:27.00]TBS系「CDTV」4・5月度オープニングテーマ
-[03:27.60]「lRC By BlurFOCUS」
+[03:27.60]「Original lRC By BlurFOCUS」
 [03:28.35]`
 }
 
