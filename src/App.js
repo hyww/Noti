@@ -4,13 +4,15 @@ import './App.css';
 import Youtube from './Youtube.js'
 import Subtitle from './Subtitle.js'
 import lrcParser from './lrcParser.js'
+import defaultVid from './seishundokei.js'
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
       player: null,
-      videoId: "Mqr-kjvXsk8",
+      videoId: defaultVid.videoId,
+      videoUrl: `https://www.youtube.com/watch?v=${defaultVid.videoId}`,
       time: 0,
       timer: null,
     }
@@ -26,6 +28,8 @@ class App extends Component {
         <div>
           <input
             type="textbox"
+            ref="videoUrl"
+            onClick={(e)=>e.target.select()}
           ></input>
           <button
             onClick={this.urlOnSet}
@@ -45,19 +49,29 @@ class App extends Component {
         ></Subtitle>
         <textarea
           onChange={this.lrcOnChange}
+          ref="text"
+          value={defaultVid.lrc}
         ></textarea>
       </div>
     );
   }
-  lrcOnChange(e) {
-    const parsed = lrcParser(e.target.value);
+  componentDidMount() {
+    this.setLrc(this.refs.text.value);
+    this.refs.videoUrl.value = this.state.videoUrl;
+  }
+  setLrc(t) {
+    const parsed = lrcParser(t);
     console.log(parsed);
     this.setState({ sub: parsed.lyrics});
+  }
+  lrcOnChange(e) {
+    this.setLrc(e.target.value);
   }
   urlOnSet(e) {
     const url = e.target.previousSibling.value;
     if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)(\w+)(.+)?/.test(url) ) {
       const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)(\w+)(.+)?/, "$5");
+      console.log(videoId);
       this.setState({videoId});
     }
   }
