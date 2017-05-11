@@ -6,7 +6,7 @@
   flex-wrap: wrap;
   flex-direction: column;
 }
-input[type=textbox]{
+input[type=textbox].videoUrl{
   width: 580px;
 }
 textarea{

@@ -1,10 +1,11 @@
 /* global YT */
 import React, { Component } from 'react';
 import './App.css';
-import Youtube from './Youtube.js'
-import Subtitle from './Subtitle.js'
-import lrcParser from './lrcParser.js'
-import defaultVid from './seishundokei.js'
+import Youtube from './Youtube.js';
+import Subtitle from './Subtitle.js';
+import Offset from './Offset.js';
+import lrcParser from './lrcParser.js';
+import defaultVid from './seishundokei.js';
 
 class App extends Component {
   constructor() {
@@ -15,9 +16,11 @@ class App extends Component {
       videoUrl: `https://www.youtube.com/watch?v=${defaultVid.videoId}`,
       time: 0,
       timer: null,
+      offset: defaultVid.offset||0,
     }
     this.setPlayer = this.setPlayer.bind(this);
     this.setTime = this.setTime.bind(this);
+    this.setOffset = this.setOffset.bind(this);
     this.urlOnSet = this.urlOnSet.bind(this);
     this.lrcOnChange = this.lrcOnChange.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
@@ -28,6 +31,7 @@ class App extends Component {
         <div>
           <input
             type="textbox"
+            className="videoUrl"
             ref="videoUrl"
             onClick={(e)=>e.target.select()}
           ></input>
@@ -46,7 +50,12 @@ class App extends Component {
         <Subtitle
           sub={this.state.sub}
           time={this.state.time}
+          offset={this.state.offset}
         ></Subtitle>
+        <Offset
+          offset={this.state.offset}
+          setOffset={this.setOffset}
+        ></Offset>
         <textarea
           onChange={this.lrcOnChange}
           ref="text"
@@ -58,6 +67,10 @@ class App extends Component {
   componentDidMount() {
     this.setLrc(this.refs.text.value);
     this.refs.videoUrl.value = this.state.videoUrl;
+  }
+  setOffset(s) {
+    s = parseInt((s<0?s-0.05:s+0.05)*10, 10)/10;
+    this.setState({ offset: s });
   }
   setLrc(t) {
     const parsed = lrcParser(t);
@@ -101,7 +114,6 @@ class App extends Component {
   }
   setTime() {
     this.setState({ time: this.state.player.getCurrentTime() });
-    console.log(this.state.time);
   }
 }
 

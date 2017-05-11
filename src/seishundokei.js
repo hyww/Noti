@@ -1,9 +1,11 @@
 const seishundokei = {
   videoId: "n-iXRXpfVTs",
+  offset: -50.4,
   lrc: 
 `[ti:青春時計]
 [ar:NGT48]
 [al:青春時計]
+[00:00.00]
 [00:00.59]春天的制服 裙襬搖搖
 [00:02.63]蹦地跳過護欄
 [00:04.73]你全力地跑著
