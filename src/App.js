@@ -69,8 +69,8 @@ class App extends Component {
   }
   urlOnSet(e) {
     const url = e.target.previousSibling.value;
-    if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)(\w+)(.+)?/.test(url) ) {
-      const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)(\w+)(.+)?/, "$5");
+    if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/.test(url) ) {
+      const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/, "$5");
       console.log(videoId);
       this.setState({videoId});
     }
