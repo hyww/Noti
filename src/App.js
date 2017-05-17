@@ -100,7 +100,12 @@ class App extends Component {
   }
   fullOnClick() {
     console.log(window.document.body.clientWidth, window.document.body.clientHeight);
-    this.state.player.setSize(window.document.body.clientWidth, window.document.body.clientHeight);
+    const vid = document.querySelector('.full');
+    const req = vid.requestFullscreen || vid.webkitRequestFullscreen || vid.mozRequestFullScreen || vid.msRequestFullscreen;
+    console.log(vid, req);
+    if (req) {
+      req.call(vid);
+    }
   }
   setPlayer(player) {
     this.setState({player});
