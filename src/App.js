@@ -30,41 +30,47 @@ class App extends Component {
     return (
       <div className="flex">
         <div>
-          <input
-            type="textbox"
-            className="videoUrl"
-            ref="videoUrl"
-            onClick={(e)=>e.target.select()}
-          ></input>
+          <div className="url">
+            <input
+              type="textbox"
+              className="videoUrl"
+              ref="videoUrl"
+              onClick={(e)=>e.target.select()}
+            ></input>
+            <button
+              onClick={this.urlOnSet}
+            >Set url</button>
+          </div>
+          <div className="full">
+            <Youtube
+              player={this.state.player}
+              videoId={this.state.videoId}
+              videoUrl={this.state.videoUrl}
+              setPlayer={this.setPlayer}
+              onPlayerReady={this.onPlayerReady}
+              onPlayerStateChange={this.onPlayerStateChange}
+            ></Youtube>
+            <Subtitle
+              sub={this.state.sub}
+              time={this.state.time}
+              offset={this.state.offset}
+            ></Subtitle>
+          </div>
+          <Offset
+            offset={this.state.offset}
+            setOffset={this.setOffset}
+          ></Offset>
           <button
-            onClick={this.urlOnSet}
-          >Set url</button>
+            onClick={this.fullOnClick}
+          >Fullscreen</button>
         </div>
-        <Youtube
-          player={this.state.player}
-          videoId={this.state.videoId}
-          videoUrl={this.state.videoUrl}
-          setPlayer={this.setPlayer}
-          onPlayerReady={this.onPlayerReady}
-          onPlayerStateChange={this.onPlayerStateChange}
-        ></Youtube>
-        <Subtitle
-          sub={this.state.sub}
-          time={this.state.time}
-          offset={this.state.offset}
-        ></Subtitle>
-        <Offset
-          offset={this.state.offset}
-          setOffset={this.setOffset}
-        ></Offset>
-        <textarea
-          onChange={this.lrcOnChange}
-          ref="text"
-          value={defaultVid.lrc}
-        ></textarea>
-        <button
-          onClick={this.fullOnClick}
-        >Fullscreen</button>
+        <div>
+          <textarea
+            onChange={this.lrcOnChange}
+            ref="text"
+            defaultValue={defaultVid.lrc}
+          ></textarea>
+        </div>
       </div>
     );
   }
@@ -93,6 +99,7 @@ class App extends Component {
     }
   }
   fullOnClick() {
+    console.log(window.document.body.clientWidth, window.document.body.clientHeight);
     this.state.player.setSize(window.document.body.clientWidth, window.document.body.clientHeight);
   }
   setPlayer(player) {

@@ -22,8 +22,6 @@ class Youtube extends Component {
     var player;
     window.onYouTubeIframeAPIReady = function() {
       player = new YT.Player('player', {
-        height: '390',
-        width: '640',
         videoId: props.videoId,
         events: {
           'onReady': props.onPlayerReady,

@@ -1,20 +1,41 @@
 .flex{
-  margin: 20px;
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   flex-wrap: wrap;
-  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  position: absolute;
 }
 input[type=textbox].videoUrl{
-  width: 580px;
+  width: 90%;
 }
 textarea{
-  width: 640px;
   resize: none;
-  height: 100px;
+  height: 480px;
+}
+textarea, .url, iframe {
+  width: 640px;
+  max-width: 100%;
+}
+.full{
+
 }
 .sub{
   height: 25px;
   margin: 5px;
+  text-align: center;
+}
+.flex > div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  max-width: 100%;
+}
+
+@media screen and (max-width: 480px) {
+  iframe, textarea{
+    height: 240px;
+  }
 }
