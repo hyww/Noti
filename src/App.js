@@ -38,7 +38,7 @@ class App extends Component {
     return (
       <div className="flex">
         <div>
-          <div className="url">
+          <div className={"url edit"+mode}>
             <input
               type="textbox"
               className="videoUrl"
@@ -69,8 +69,9 @@ class App extends Component {
           <Offset
             offset={this.state.offset}
             setOffset={this.setOffset}
+            mode={mode}
           ></Offset>
-          <div>
+          <div className={"edit"+mode}>
             <button
               onClick={this.mergeOnClick}
             >Set to LRC</button>

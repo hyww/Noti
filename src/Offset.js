@@ -10,7 +10,7 @@ class Offset extends Component {
   }
   render() {
     return (
-      <div className="offset">
+      <div className={"offset edit"+this.props.mode}>
         <button
           onClick={this.decrease}
         >－</button>
