@@ -15,7 +15,7 @@ class App extends Component {
       player: null,
       time: 0,
       timer: null,
-      offset: defaultVid.offset||0,
+      offset: 0,
     }
     this.setPlayer = this.setPlayer.bind(this);
     this.setTime = this.setTime.bind(this);
@@ -76,6 +76,9 @@ class App extends Component {
   componentDidMount() {
     const params = this.props.match.params;
     this.refs.videoUrl.value = `https://www.youtube.com/watch?v=${params.videoId}`;
+    if(params.offset){
+      this.setOffset(parseFloat(params.offset));
+    }
     if(params.gistId){
       window.fetch(`https://api.github.com/gists/${params.gistId}`)
         .then((res)=>{
@@ -99,9 +102,11 @@ class App extends Component {
         });
     }
   }
-  setOffset(s) {
+  setOffset(s, e) {
     s = parseInt((s<0?s-0.05:s+0.05)*10, 10)/10;
     this.setState({ offset: s });
+    if(e)
+      this.props.history.replace(this.props.match.url.replace(/\/o\/[^/]+/, `/o/${s}`));
   }
   setLrc(t) {
     const parsed = lrcParser(t);
@@ -116,7 +121,7 @@ class App extends Component {
     if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/.test(url) ) {
       const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/, "$5");
       console.log(videoId);
-      this.props.history.push(this.props.match.url.replace(/y\/[^/]+/, `y/${videoId}`));
+      this.props.history.push(this.props.match.url.replace(/\/y\/[^/]+/, `/y/${videoId}`));
     }
   }
   fullOnClick() {
@@ -159,9 +164,10 @@ class App extends Component {
 const AppRouter = () => (
   <HashRouter>
     <Switch>
+      <Route path="/y/:videoId/g/:gistId/o/:offset" component={App} />
       <Route path="/y/:videoId/g/:gistId" component={App} />
       <Route path="/y/:videoId" component={App} />
-      <Redirect to={`/y/${defaultVid.videoId}/g/${defaultVid.gistId}`} />
+      <Redirect to={`/y/${defaultVid.videoId}/g/${defaultVid.gistId}/o/${defaultVid.offset}`} />
     </Switch>
   </HashRouter>
 );

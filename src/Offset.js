@@ -6,6 +6,7 @@ class Offset extends Component {
     this.decrease = this.decrease.bind(this);
     this.increase = this.increase.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
+    this.onBlur = this.onBlur.bind(this);
   }
   render() {
     return (
@@ -17,6 +18,7 @@ class Offset extends Component {
           type="textbox"
           value={this.props.offset}
           onKeyDown={this.onKeyDown}
+          onBlur={this.onBlur}
         ></input>
         <button
           onClick={this.increase}
@@ -24,11 +26,11 @@ class Offset extends Component {
       </div>
     )
   }
-  decrease() {
-    this.props.setOffset(this.props.offset-0.1);
+  decrease(e) {
+    this.props.setOffset(this.props.offset-0.1, e);
   }
-  increase() {
-    this.props.setOffset(this.props.offset+0.1);
+  increase(e) {
+    this.props.setOffset(this.props.offset+0.1, e);
   }
   onKeyDown(e) {
     switch(e.keyCode){
@@ -42,6 +44,9 @@ class Offset extends Component {
         break;
       default:
     }
+  }
+  onBlur(e) {
+    this.props.setOffset(this.props.offset, e);
   }
 }
 
