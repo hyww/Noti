@@ -23,6 +23,7 @@ class Youtube extends Component {
     window.onYouTubeIframeAPIReady = function() {
       player = new YT.Player('player', {
         videoId: props.videoId,
+        playerVars: {fs: 0, loop:1, playsinline: 1},
         events: {
           'onReady': props.onPlayerReady,
           'onStateChange': props.onPlayerStateChange
