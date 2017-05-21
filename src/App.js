@@ -1,6 +1,6 @@
 /* global YT */
 import React, { Component } from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import Youtube from './Youtube.js';
 import Subtitle from './Subtitle.js';
@@ -157,12 +157,12 @@ class App extends Component {
   }
 }
 const AppRouter = () => (
-  <BrowserRouter>
+  <HashRouter>
     <Switch>
       <Route path="/y/:videoId/g/:gistId" component={App} />
       <Route path="/y/:videoId" component={App} />
       <Redirect to={`/y/${defaultVid.videoId}/g/${defaultVid.gistId}`} />
     </Switch>
-  </BrowserRouter>
+  </HashRouter>
 );
 export default AppRouter;
