@@ -22,8 +22,10 @@ class App extends Component {
     this.setOffset = this.setOffset.bind(this);
     this.urlOnSet = this.urlOnSet.bind(this);
     this.fullOnClick = this.fullOnClick.bind(this);
+    this.mergeOnClick = this.mergeOnClick.bind(this);
     this.lrcOnChange = this.lrcOnChange.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
+    this.onTextKeyDown = this.onTextKeyDown.bind(this);
   }
   render() {
     const params = this.props.match.params;
@@ -59,13 +61,19 @@ class App extends Component {
             offset={this.state.offset}
             setOffset={this.setOffset}
           ></Offset>
-          <button
-            onClick={this.fullOnClick}
-          >Fullscreen</button>
+          <div>
+            <button
+              onClick={this.mergeOnClick}
+            >Merge</button>
+            <button
+              onClick={this.fullOnClick}
+            >Fullscreen</button>
+          </div>
         </div>
         <div>
           <textarea
             onChange={this.lrcOnChange}
+            onKeyDown={this.onTextKeyDown}
             value={this.state.text}
             ref="text"
           ></textarea>
@@ -109,7 +117,7 @@ class App extends Component {
       this.props.history.replace(this.props.match.url.replace(/\/o\/[^/]+/, `/o/${s}`));
   }
   setLrc(t) {
-    const parsed = lrcParser(t);
+    const parsed = lrcParser.parse(t);
     console.log(parsed);
     this.setState({ sub: parsed.lyrics, text: t});
   }
@@ -159,6 +167,28 @@ class App extends Component {
   }
   setTime() {
     this.setState({ time: this.state.player.getCurrentTime() });
+  }
+  onTextKeyDown(e) {
+    const t = e.target;
+    switch(e.keyCode){
+      case 219: //'['
+        if(e.ctrlKey) {
+          const start = t.selectionStart;
+          const end = t.selectionEnd;
+          const value = t.value;
+          this.setLrc(value.slice(0, start)+
+            lrcParser.timestamp(this.state.time)
+            +value.slice(end));
+          setTimeout(()=>{t.selectionStart = t.selectionEnd = start+10;}, 50);
+          e.preventDefault();
+        }
+        break;
+      default:
+    }
+  }
+  mergeOnClick() {
+    this.setLrc( lrcParser.offset(this.state.text, this.state.offset));
+    this.setOffset(0, true);
   }
 }
 const AppRouter = () => (
