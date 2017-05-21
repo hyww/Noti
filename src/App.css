@@ -26,6 +26,7 @@ textarea, .url, iframe {
   margin: 5px;
   text-align: center;
   margin-bottom: 27px;
+  background-color: white;
 }
 .flex > div {
   display: flex;
@@ -39,7 +40,7 @@ textarea, .url, iframe {
   right: 0;
   bottom: 0;
 }
-.full:-webkit-full-screen, .full.view {
+.full.view{
   width: 100%;
   height: 100%;
   font-size: 2vmax;
@@ -47,7 +48,33 @@ textarea, .url, iframe {
   left: 0;
   top:0;
 }
-.full:-webkit-full-screen > iframe, .full.view > iframe {
+.full:-webkit-full-screen{
+  width: 100%;
+  height: 100%;
+  font-size: 2vmax;
+  position: absolute;
+  left: 0;
+  top:0;
+}
+.full:-webkit-full-screen> .sub {
+  height: 10%;
+}
+.full.view > .sub {
+  height: 10%;
+}
+.full:-moz-full-screen > .sub, .full:fullscreen > sub{
+  font-size: 2vmax;
+  height: 10%;
+}
+.full.view > iframe {
+  width: 100%;
+  height: 90%;
+}
+.full:-moz-full-screen > iframe, .full:fullscreen > iframe {
+  width: 100%;
+  height: 90%;
+}
+.full:-webkit-full-screen > iframe{
   width: 100%;
   height: 90%;
 }
