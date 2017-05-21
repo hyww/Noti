@@ -16,6 +16,7 @@ class App extends Component {
       time: 0,
       timer: null,
       offset: 0,
+      gisting: false,
     }
     this.setPlayer = this.setPlayer.bind(this);
     this.setTime = this.setTime.bind(this);
@@ -23,9 +24,11 @@ class App extends Component {
     this.urlOnSet = this.urlOnSet.bind(this);
     this.fullOnClick = this.fullOnClick.bind(this);
     this.mergeOnClick = this.mergeOnClick.bind(this);
+    this.gistOnClick = this.gistOnClick.bind(this);
     this.lrcOnChange = this.lrcOnChange.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
     this.onTextKeyDown = this.onTextKeyDown.bind(this);
+    this.getGist = this.getGist.bind(this);
   }
   render() {
     const params = this.props.match.params;
@@ -69,6 +72,10 @@ class App extends Component {
             <button
               onClick={this.mergeOnClick}
             >Set to LRC</button>
+            <button
+              onClick={this.gistOnClick}
+              disabled={this.state.gisting}
+            >Save to Gist</button>
           </div>
         </div>
         <div>
@@ -82,6 +89,26 @@ class App extends Component {
       </div>
     );
   }
+  getGist(id) {
+    window.fetch(`https://api.github.com/gists/${id}`)
+      .then((res)=>{
+        if(!res.ok)
+          throw new Error(res.statusText);
+        return res.json();
+      })
+      .then(json=>{
+        for(let i in json.files){
+          if(json.files[i].truncated)//FIXME: fetch again from raw_url
+            throw new Error('truncated!');
+          this.setLrc(json.files[i].content);
+          break;//FIXME: select from multiple files?
+        }
+      })
+      .catch((e)=>{
+        console.log(e);
+        this.props.history.replace(`/y/${this.props.match.params.videoId}`);
+      });
+  }
   componentDidMount() {
     const params = this.props.match.params;
     this.refs.videoUrl.value = `https://www.youtube.com/watch?v=${params.videoId}`;
@@ -89,26 +116,12 @@ class App extends Component {
       this.setOffset(parseFloat(params.offset));
     }
     if(params.gistId){
-      window.fetch(`https://api.github.com/gists/${params.gistId}`)
-        .then((res)=>{
-          console.log(res);
-          if(!res.ok)
-            throw new Error(res.statusText);
-          return res.json();
-        })
-        .then(json=>{
-          console.log(json);
-          for(let i in json.files){
-            if(json.files[i].truncated)//FIXME: fetch again from raw_url
-              throw new Error('truncated!');
-            this.setLrc(json.files[i].content);
-            break;//FIXME: select from multiple files?
-          }
-        })
-        .catch((e)=>{
-          console.log(e);
-          this.props.history.replace(`/y/${params.videoId}`);
-        });
+      this.getGist(params.gistId);
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+    if ( this.props.match.params.gistId !== nextProps.match.params.gistId ) {
+      this.getGist(nextProps.match.params.gistId);
     }
   }
   setOffset(s, e) {
@@ -147,6 +160,34 @@ class App extends Component {
         req.call(vid);
       }
     }
+  }
+  gistOnClick() {
+    const videoId = this.props.match.params.videoId;
+    this.setState({ gisting: true });
+    window.fetch('https://api.github.com/gists', {
+      method: 'POST',
+      body: JSON.stringify({
+        descripttion: `a subtitle in lrc format for https://www.youtube.com/watch?v=${videoId} created using https://hyww.github.io/Noti/`,
+        public: false,
+        files:{
+          "file.lrc": {
+            content: this.state.text
+          }
+        }
+      })
+    }).then((res)=>{
+      if(!res.ok)
+        throw new Error(res.statusText);
+      return res.json();
+    }).then(json=>{
+      const params = this.props.match.params;
+      this.props.history.push(`/y/${params.videoId}/g/${json.id}${params.offset?'/'+params.offset:''}`);
+      this.setState({ gisting: false });
+    }).catch((e)=>{
+      alert('failed');
+      console.log(e);
+      this.setState({ gisting: false });
+    });
   }
   setPlayer(player) {
     this.setState({player});
