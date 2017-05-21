@@ -78,7 +78,8 @@ class App extends Component {
             >Save to Gist</button>
           </div>
         </div>
-        <div>
+        <div
+          className={"edit"+mode}>
           <textarea
             onChange={this.lrcOnChange}
             onKeyDown={this.onTextKeyDown}
