@@ -29,6 +29,7 @@ class App extends Component {
   }
   render() {
     const params = this.props.match.params;
+    const mode = params.mode==='view'?' view':'';
     return (
       <div className="flex">
         <div>
@@ -43,7 +44,7 @@ class App extends Component {
               onClick={this.urlOnSet}
             >Set url</button>
           </div>
-          <div className="full">
+          <div className={"full"+mode}>
             <Youtube
               player={this.state.player}
               videoId={params.videoId}
@@ -64,7 +65,7 @@ class App extends Component {
           <div>
             <button
               onClick={this.mergeOnClick}
-            >Merge</button>
+            >Set to LRC</button>
             <button
               onClick={this.fullOnClick}
             >Fullscreen</button>
@@ -114,7 +115,7 @@ class App extends Component {
     s = parseInt((s<0?s-0.05:s+0.05)*10, 10)/10;
     this.setState({ offset: s });
     if(e)
-      this.props.history.replace(this.props.match.url.replace(/\/o\/[^/]+/, `/o/${s}`));
+      this.props.history.replace(this.props.match.url.replace(/(\/[0-9\-.]+)(\/view)?$/, `/${s}$2`));
   }
   setLrc(t) {
     const parsed = lrcParser.parse(t);
@@ -194,10 +195,9 @@ class App extends Component {
 const AppRouter = () => (
   <HashRouter>
     <Switch>
-      <Route path="/y/:videoId/g/:gistId/o/:offset" component={App} />
-      <Route path="/y/:videoId/g/:gistId" component={App} />
+      <Route path="/y/:videoId/g/:gistId/:offset([0-9\-.]+)?/:mode(view)?" component={App} />
       <Route path="/y/:videoId" component={App} />
-      <Redirect to={`/y/${defaultVid.videoId}/g/${defaultVid.gistId}/o/${defaultVid.offset}`} />
+      <Redirect to={`/y/${defaultVid.videoId}/g/${defaultVid.gistId}/${defaultVid.offset}`} />
     </Switch>
   </HashRouter>
 );
