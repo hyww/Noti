@@ -66,16 +66,38 @@ class App extends Component {
         <div>
           <textarea
             onChange={this.lrcOnChange}
+            value={this.state.text}
             ref="text"
-            defaultValue={defaultVid.lrc}
           ></textarea>
         </div>
       </div>
     );
   }
   componentDidMount() {
-    this.setLrc(this.refs.text.value);
-    this.refs.videoUrl.value = `https://www.youtube.com/watch?v=${this.props.match.params.videoId}`;
+    const params = this.props.match.params;
+    this.refs.videoUrl.value = `https://www.youtube.com/watch?v=${params.videoId}`;
+    if(params.gistId){
+      window.fetch(`https://api.github.com/gists/${params.gistId}`)
+        .then((res)=>{
+          console.log(res);
+          if(!res.ok)
+            throw new Error(res.statusText);
+          return res.json();
+        })
+        .then(json=>{
+          console.log(json);
+          for(let i in json.files){
+            if(json.files[i].truncated)//FIXME: fetch again from raw_url
+              throw new Error('truncated!');
+            this.setLrc(json.files[i].content);
+            break;//FIXME: select from multiple files?
+          }
+        })
+        .catch((e)=>{
+          console.log(e);
+          this.props.history.replace(`/${params.site}/${params.videoId}`);
+        });
+    }
   }
   setOffset(s) {
     s = parseInt((s<0?s-0.05:s+0.05)*10, 10)/10;
@@ -84,7 +106,7 @@ class App extends Component {
   setLrc(t) {
     const parsed = lrcParser(t);
     console.log(parsed);
-    this.setState({ sub: parsed.lyrics});
+    this.setState({ sub: parsed.lyrics, text: t});
   }
   lrcOnChange(e) {
     this.setLrc(e.target.value);
@@ -137,8 +159,9 @@ class App extends Component {
 const AppRouter = () => (
   <BrowserRouter>
     <Switch>
-      <Route path="/:site/:videoId" component={App} />
-      <Redirect to={`/y/${defaultVid.videoId}`} />
+      <Route path="/y/:videoId/g/:gistId" component={App} />
+      <Route path="/y/:videoId" component={App} />
+      <Redirect to={`/y/${defaultVid.videoId}/g/${defaultVid.gistId}`} />
     </Switch>
   </BrowserRouter>
 );

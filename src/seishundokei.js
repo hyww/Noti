@@ -1,5 +1,6 @@
 const seishundokei = {
   videoId: "n-iXRXpfVTs",
+  gistId: "5e8066ad9f64d9e6d9f096f243a73da2",
   offset: -50.4,
   lrc: 
 `[ti:青春時計]
