@@ -57,6 +57,9 @@ class App extends Component {
               time={this.state.time}
               offset={this.state.offset}
             ></Subtitle>
+            <button
+              onClick={this.fullOnClick}
+            >Fullscreen</button>
           </div>
           <Offset
             offset={this.state.offset}
@@ -66,9 +69,6 @@ class App extends Component {
             <button
               onClick={this.mergeOnClick}
             >Set to LRC</button>
-            <button
-              onClick={this.fullOnClick}
-            >Fullscreen</button>
           </div>
         </div>
         <div>
@@ -134,12 +134,18 @@ class App extends Component {
     }
   }
   fullOnClick() {
-    console.log(window.document.body.clientWidth, window.document.body.clientHeight);
-    const vid = document.querySelector('.full');
-    const req = vid.requestFullscreen || vid.webkitRequestFullscreen || vid.mozRequestFullScreen || vid.msRequestFullscreen;
-    console.log(vid, req);
-    if (req) {
-      req.call(vid);
+    if(document.webkitFullscreenElement) {
+      const exit = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
+      if (exit) {
+        exit.call(document);
+      }
+    }
+    else {
+      const vid = document.querySelector('.full');
+      const req = vid.requestFullscreen || vid.webkitRequestFullscreen || vid.mozRequestFullScreen || vid.msRequestFullscreen;
+      if (req) {
+        req.call(vid);
+      }
     }
   }
   setPlayer(player) {

@@ -19,7 +19,7 @@ textarea, .url, iframe {
   max-width: 100%;
 }
 .full{
-
+  position: relative;
 }
 .sub{
   height: 25px;
@@ -32,6 +32,11 @@ textarea, .url, iframe {
   align-items: center;
   flex-direction: column;
   max-width: 100%;
+}
+.full > button {
+  position: absolute;
+  right: 0;
+  bottom: 0;
 }
 .full:-webkit-full-screen, .full.view {
   width: 100%;
