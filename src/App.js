@@ -157,7 +157,7 @@ class App extends Component {
     }
   }
   fullOnClick() {
-    if(document.webkitFullscreenElement) {
+    if(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) {
       const exit = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen;
       if (exit) {
         exit.call(document);
