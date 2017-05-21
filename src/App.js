@@ -95,7 +95,7 @@ class App extends Component {
         })
         .catch((e)=>{
           console.log(e);
-          this.props.history.replace(`/${params.site}/${params.videoId}`);
+          this.props.history.replace(`/y/${params.videoId}`);
         });
     }
   }
@@ -116,7 +116,7 @@ class App extends Component {
     if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/.test(url) ) {
       const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/, "$5");
       console.log(videoId);
-      this.props.history.push(`/y/${videoId}`);
+      this.props.history.push(this.props.match.url.replace(/y\/[^/]+/, `y/${videoId}`));
     }
   }
   fullOnClick() {
