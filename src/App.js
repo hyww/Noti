@@ -1,5 +1,6 @@
 /* global YT */
 import React, { Component } from 'react';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import './App.css';
 import Youtube from './Youtube.js';
 import Subtitle from './Subtitle.js';
@@ -12,8 +13,6 @@ class App extends Component {
     super();
     this.state = {
       player: null,
-      videoId: defaultVid.videoId,
-      videoUrl: `https://www.youtube.com/watch?v=${defaultVid.videoId}`,
       time: 0,
       timer: null,
       offset: defaultVid.offset||0,
@@ -27,6 +26,7 @@ class App extends Component {
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
   }
   render() {
+    const params = this.props.match.params;
     return (
       <div className="flex">
         <div>
@@ -44,8 +44,7 @@ class App extends Component {
           <div className="full">
             <Youtube
               player={this.state.player}
-              videoId={this.state.videoId}
-              videoUrl={this.state.videoUrl}
+              videoId={params.videoId}
               setPlayer={this.setPlayer}
               onPlayerReady={this.onPlayerReady}
               onPlayerStateChange={this.onPlayerStateChange}
@@ -76,7 +75,7 @@ class App extends Component {
   }
   componentDidMount() {
     this.setLrc(this.refs.text.value);
-    this.refs.videoUrl.value = this.state.videoUrl;
+    this.refs.videoUrl.value = `https://www.youtube.com/watch?v=${this.props.match.params.videoId}`;
   }
   setOffset(s) {
     s = parseInt((s<0?s-0.05:s+0.05)*10, 10)/10;
@@ -95,7 +94,7 @@ class App extends Component {
     if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/.test(url) ) {
       const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/, "$5");
       console.log(videoId);
-      this.setState({videoId});
+      this.props.history.push(`/y/${videoId}`);
     }
   }
   fullOnClick() {
@@ -135,5 +134,12 @@ class App extends Component {
     this.setState({ time: this.state.player.getCurrentTime() });
   }
 }
-
-export default App;
+const AppRouter = () => (
+  <BrowserRouter>
+    <Switch>
+      <Route path="/:site/:videoId" component={App} />
+      <Redirect to={`/y/${defaultVid.videoId}`} />
+    </Switch>
+  </BrowserRouter>
+);
+export default AppRouter;
