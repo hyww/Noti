@@ -153,7 +153,7 @@ class App extends Component {
     if( /((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/.test(url) ) {
       const videoId = url.replace(/((https?:)?\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([^\s?]+)(.+)?/, "$5");
       console.log(videoId);
-      this.props.history.push(this.props.match.url.replace(/\/y\/[^/]+/, `/y/${videoId}`));
+      this.props.history.push(`/y/${videoId}`);
     }
   }
   fullOnClick() {
