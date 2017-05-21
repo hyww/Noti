@@ -90,6 +90,7 @@ class App extends Component {
             onKeyDown={this.onTextKeyDown}
             value={this.state.text}
             ref="text"
+            title="Ctrl+[ to insert timestamp"
           ></textarea>
         </div>
       </div>
@@ -267,6 +268,22 @@ class App extends Component {
             lrcParser.timestamp(this.state.time)
             +value.slice(end));
           setTimeout(()=>{t.selectionStart = t.selectionEnd = start+10;}, 50);
+          e.preventDefault();
+        }
+        break;
+      case 39://right
+        if(e.ctrlKey) {
+          const time = this.state.time+5;
+          this.state.player.seekTo(time, true);
+          this.setState({ time });
+          e.preventDefault();
+        }
+        break;
+      case 37://left
+        if(e.ctrlKey) {
+          const time = this.state.time-5;
+          this.state.player.seekTo(time, true);
+          this.setState({ time });
           e.preventDefault();
         }
         break;
