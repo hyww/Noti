@@ -25,6 +25,8 @@ class App extends Component {
     this.fullOnClick = this.fullOnClick.bind(this);
     this.mergeOnClick = this.mergeOnClick.bind(this);
     this.gistOnClick = this.gistOnClick.bind(this);
+    this.setGistOnClick = this.setGistOnClick.bind(this);
+    this.setGist = this.setGist.bind(this);
     this.lrcOnChange = this.lrcOnChange.bind(this);
     this.onPlayerStateChange = this.onPlayerStateChange.bind(this);
     this.onTextKeyDown = this.onTextKeyDown.bind(this);
@@ -75,7 +77,10 @@ class App extends Component {
             <button
               onClick={this.gistOnClick}
               disabled={this.state.gisting}
-            >Save to Gist</button>
+            >Save to Gist{this.state.gist?'':'(anonymous)'}</button>
+            <button
+              onClick={this.setGistOnClick}
+            >Set Gist token</button>
           </div>
         </div>
         <div
@@ -113,6 +118,10 @@ class App extends Component {
   componentDidMount() {
     const params = this.props.match.params;
     this.refs.videoUrl.value = `https://www.youtube.com/watch?v=${params.videoId}`;
+    const gist = document.cookie.split(/[ ;]/).filter(a=>/^gist=/.test(a)).map(a=>a.replace(/^gist=/,''))[0];
+    if(gist) {
+      this.setGist(gist);
+    }
     if(params.offset){
       this.setOffset(parseFloat(params.offset));
     }
@@ -164,11 +173,12 @@ class App extends Component {
   }
   gistOnClick() {
     const videoId = this.props.match.params.videoId;
+    const gistId = this.props.match.params.gistId;
     this.setState({ gisting: true });
-    window.fetch('https://api.github.com/gists', {
-      method: 'POST',
+    let options = {
+      method: 'PATCH',
       body: JSON.stringify({
-        descripttion: `a subtitle in lrc format for https://www.youtube.com/watch?v=${videoId} created using https://hyww.github.io/Noti/`,
+        description: `a subtitle in lrc format for https://www.youtube.com/watch?v=${videoId} created using https://hyww.github.io/Noti/`,
         public: false,
         files:{
           "file.lrc": {
@@ -176,19 +186,47 @@ class App extends Component {
           }
         }
       })
-    }).then((res)=>{
+    };
+    if(this.state.gist){
+      options.headers = {
+        Authorization: `token ${this.state.gist}`,
+      }
+    }
+    //FIXME: don't always try to PATCH
+    window.fetch(`https://api.github.com/gists/${gistId}`, options).then((res)=>{
       if(!res.ok)
         throw new Error(res.statusText);
       return res.json();
     }).then(json=>{
-      const params = this.props.match.params;
-      this.props.history.push(`/y/${params.videoId}/g/${json.id}${params.offset?'/'+params.offset:''}`);
       this.setState({ gisting: false });
-    }).catch((e)=>{
-      alert('failed');
-      console.log(e);
-      this.setState({ gisting: false });
+    }).catch(()=>{
+      options.method = 'POST';
+      return window.fetch('https://api.github.com/gists', options)
+      .then((res)=>{
+        if(!res.ok)
+          throw new Error(res.statusText);
+        return res.json();
+      }).then(json=>{
+        const params = this.props.match.params;
+        this.props.history.push(`/y/${params.videoId}/g/${json.id}${params.offset?'/'+params.offset:''}`);
+        this.setState({ gisting: false });
+      }).catch((e)=>{
+        alert('failed');
+        console.log(e);
+        this.setState({ gisting: false });
+      });
     });
+  }
+  setGist(token) {
+    let now = new Date();
+    now.setTime(now.getTime()+ 120*24*60*60*1000);// 120 days later
+    document.cookie = 'gist='+token+'; expires='+now.toGMTString();
+    this.setState({ gist: token });
+  }
+  setGistOnClick() {
+    const token = prompt('Personal access token for GitHub API:');
+    if(token)
+      this.setGist(token);
   }
   setPlayer(player) {
     this.setState({player});
