@@ -11,6 +11,8 @@ import lrcParser from './lrcParser.js';
 import defaultVid from './seishundokei.js';
 
 ReactGA.initialize('UA-000000-01');
+ReactGA.set({ page: window.location.pathname + window.location.hash });
+ReactGA.pageview(window.location.pathname + window.location.hash);
 const history = createHistory();
 history.listen((location, action) => {
   ReactGA.set({ page: window.location.pathname + window.location.hash });
