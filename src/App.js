@@ -13,8 +13,8 @@ import defaultVid from './seishundokei.js';
 ReactGA.initialize('UA-000000-01');
 const history = createHistory();
 history.listen((location, action) => {
-  ReactGA.set({ page: window.location.pathname + window.location.search });
-  ReactGA.pageview(window.location.pathname + window.location.search);
+  ReactGA.set({ page: window.location.pathname + window.location.hash });
+  ReactGA.pageview(window.location.pathname + window.location.hash);
 });
 
 class App extends Component {
@@ -141,7 +141,7 @@ class App extends Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    if ( this.props.match.params.gistId !== nextProps.match.params.gistId ) {
+    if ( this.props.match.params.gistId !== nextProps.match.params.gistId && nextProps.match.params.gistId) {
       this.getGist(nextProps.match.params.gistId);
     }
   }
