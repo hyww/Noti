@@ -1,12 +1,21 @@
 /* global YT */
 import React, { Component } from 'react';
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
+import createHistory from 'history/createBrowserHistory';
+import ReactGA from 'react-ga';
 import './App.css';
 import Youtube from './Youtube.js';
 import Subtitle from './Subtitle.js';
 import Offset from './Offset.js';
 import lrcParser from './lrcParser.js';
 import defaultVid from './seishundokei.js';
+
+ReactGA.initialize('UA-000000-01');
+const history = createHistory();
+history.listen((location, action) => {
+  ReactGA.set({ page: window.location.pathname + window.location.search });
+  ReactGA.pageview(window.location.pathname + window.location.search);
+});
 
 class App extends Component {
   constructor() {
